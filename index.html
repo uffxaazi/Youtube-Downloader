@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <!-- Bootstrap 5 CSS from CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Animate.css for animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #c0392b;
+            --secondary: #e74c3c;
+            --accent: #f39c12;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            font-weight: bold;
+            background: linear-gradient(to right, #f39c12, #f1c40f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .creator {
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        .custom-input {
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .custom-input:focus {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .gradient-button {
+            background: linear-gradient(to right, #f39c12, #f1c40f);
+            border-radius: 25px;
+            border: none;
+            color: #343a40;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .download-button {
+            background: linear-gradient(to right, #20bf55, #01baef);
+            border-radius: 25px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 250px;
+            display: none;
+        }
+        
+        .download-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .format-selector {
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            background-color: white;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .coffee-button {
+            background: linear-gradient(to right, #ffdd00, #fbb034);
+            color: #5a3921;
+            font-weight: bold;
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .coffee-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .telegram-button {
+            background: linear-gradient(to right, #0088cc, #29b6f6);
+            color: white;
+            font-weight: bold;
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .telegram-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .github-button {
+            background: linear-gradient(to right, #24292e, #444);
+            color: white;
+            font-weight: bold;
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .github-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .video-thumbnail {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .video-thumbnail:hover {
+            transform: scale(1.02);
+        }
+        
+        .video-info {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+        
+        .social-buttons {
+            margin-top: 10px;
+        }
+        
+        .quality-button {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            font-weight: bold;
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin: 5px;
+            padding: 8px 15px;
+        }
+        
+        .quality-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quality-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <header class="text-center mb-5">
+            <h1 class="display-4 animate__animated animate__fadeIn">
+                <i class="fab fa-youtube me-2"></i>YouTube Downloader
+            </h1>
+            <div class="creator animate__animated animate__fadeIn">
+                Created with <i class="fas fa-heart text-danger"></i> by uffxaazi
+            </div>
+        </header>
+        
+        <div class="glass-card p-4 p-md-5 mb-5 animate__animated animate__fadeInUp">
+            <p class="lead text-center mb-4">
+                Download your favorite YouTube videos in seconds!
+                Simply paste the video URL below and click download.
+            </p>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="input-group mb-4">
+                        <input type="text" id="video-url" class="form-control custom-input py-3" 
+                               placeholder="Paste YouTube video URL here...">
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button onclick="processVideo()" class="btn gradient-button py-3">
+                            Get Video Info <i class="fas fa-search ms-2"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-4" id="loading" style="display: none;">
+                        <div class="spinner-border text-light" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div id="result" class="mt-4 text-center"></div>
+                    
+                    <div class="quality-options" id="quality-options">
+                        <!-- Quality options will be added here dynamically -->
+                    </div>
+                    
+                    <div class="d-flex justify-content-center">
+                        <button id="download-btn" class="btn download-button py-2 px-4 animate__animated animate__fadeIn">
+                            <i class="fas fa-download me-2"></i> Download Video
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-card p-4 p-md-5 text-center animate__animated animate__fadeInUp">
+            <h2 class="mb-3 text-warning">Support This Project</h2>
+            <p>If you enjoy using this tool, please consider supporting the creator!</p>
+            
+            <div class="button-container">
+                <a href="#" class="btn coffee-button py-2 px-4 w-100">
+                    <i class="fas fa-mug-hot me-2"></i> Buy Me a Coffee
+                </a>
+                
+                <a href="https://t.me/uffx_aazi" target="_blank" class="btn telegram-button py-2 px-4 w-100">
+                    <i class="fab fa-telegram me-2"></i> Connect on Telegram
+                </a>
+                
+                <a href="https://github.com/uffxaazi" target="_blank" class="btn github-button py-2 px-4 w-100">
+                    <i class="fab fa-github me-2"></i> Follow on GitHub
+                </a>
+            </div>
+            
+            <p class="mt-4 mb-0">Thank you for your support! It helps keep this project running and improving.</p>
+        </div>
+        
+        <footer class="text-center mt-5 opacity-75">
+            <p class="small">This service is for personal use only. Please respect copyright laws and YouTube's Terms of Service.</p>
+        </footer>
+    </div>
+    
+    <!-- Bootstrap JS from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+    <script>
+        let currentVideo = null;
+        let selectedQuality = null;
+        
+        async function processVideo() {
+            const videoUrl = document.getElementById("video-url").value;
+            if (!videoUrl) {
+                alert("Please enter a YouTube video URL first!");
+                return;
+            }
+            
+            if (!isValidYouTubeUrl(videoUrl)) {
+                alert("Please enter a valid YouTube URL!");
+                return;
+            }
+            
+            // Hide download button if visible from previous search
+            document.getElementById("download-btn").style.display = "none";
+            document.getElementById("quality-options").style.display = "none";
+            
+            // Show loading animation
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("result").innerHTML = "";
+            
+            try {
+                const response = await fetch('https://www.clipto.com/api/youtube', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: videoUrl })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading animation
+                document.getElementById("loading").style.display = "none";
+                
+                if (data && data.title) {
+                    // Store current video data
+                    currentVideo = data;
+                    
+                    // Create video info display
+                    const thumbnailUrl = data.thumbnail || `https://i.ytimg.com/vi/${getVideoId(videoUrl)}/maxresdefault.jpg`;
+                    
+                    const resultHtml = `
+                        <img src="${thumbnailUrl}" alt="Video Thumbnail" class="video-thumbnail animate__animated animate__fadeIn">
+                        <div class="video-info animate__animated animate__fadeIn">
+                            <h4>${data.title}</h4>
+                            <p><strong>Duration:</strong> ${formatDuration(data.duration || 0)}</p>
+                            <p><strong>Channel:</strong> ${data.channel || 'Unknown'}</p>
+                        </div>
+                    `;
+                    
+                    // Add video info to the page
+                    $("#result").html(resultHtml);
+                    
+                    // Show quality options
+                    displayQualityOptions(data);
+                    
+                    // Show download button with animation
+                    setTimeout(() => {
+                        const downloadBtn = document.getElementById("download-btn");
+                        downloadBtn.style.display = "inline-block";
+                    }, 500);
+                } else {
+                    $("#result").html(`
+                        <div class="alert alert-danger animate__animated animate__shakeX" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i> 
+                            Failed to fetch video information. Please check the URL and try again.
+                        </div>
+                    `);
+                }
+            } catch (error) {
+                document.getElementById("loading").style.display = "none";
+                $("#result").html(`
+                    <div class="alert alert-danger animate__animated animate__shakeX" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> 
+                        An error occurred. Please check your connection and try again.
+                    </div>
+                `);
+            }
